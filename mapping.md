@@ -1,5 +1,26 @@
 # Mapping from Python to LUA
 
+<table>
+<thead><tr><th>Statement</th><th>Python</th><th>LUA</th></tr></thead>
+<tbody>
+<tr class="odd">
+<th>for range(size)</th>
+<td><pre>for A in range(10):
+    {block}</pre></td>
+<td><pre>for A = 0, 9 do
+    {block} 
+end</pre></td>
+</tr>
+<tr class="even">
+<th>for range(start, end)</th>
+<td><pre>for A in range(1,10):
+    {block}</pre></td>
+<td><pre>for A = 1, 10 do
+    {block} 
+end</pre></td>
+</tr>
+</tbody>
+</table>
 
 ## FOR statement
 ### range(size)
