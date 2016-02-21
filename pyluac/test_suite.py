@@ -15,7 +15,7 @@ class PyLUAcLexerTest(unittest.TestCase):
         lexer.input(data)
 
         tokens = list(lexer)
-        assert [tok.type for tok in tokens] == ['IDENTIFIER', 'LPAREN', 'STRING', 'RPAREN']
+        assert [tok.type for tok in tokens] == ['ID', '(', 'STRING', ')']
 
     #def test_for_1(self):
         

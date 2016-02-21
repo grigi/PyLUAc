@@ -3,28 +3,39 @@ PyLUAc tokeniser/lexer
 '''
 import ply.lex as lex
 
+reserved = {
+    'if'   : 'IF',
+    'then' : 'THEN',
+    'else' : 'ELSE',
+    'while': 'WHILE',
+    'for'  : 'FOR',
+}
 
 # List of token names.   This is always required
-tokens = (
-    'IDENTIFIER',
+tokens = [
+    'ID',
     'STRING',
     'NUMBER',
-    'LPAREN',
-    'RPAREN',
+#    'LPAREN',
+#    'RPAREN',
 #    'LSBRACK',
 #    'RSBRACK',
 #    'LCBRACE',
 #    'RCBRACE',
-)
+] + list(reserved.values())
 
+literals = [ '+','-','*','/','(',')' ]
 
 # Simple tokens
-t_LPAREN     = r'\('
-t_RPAREN     = r'\)'
-t_IDENTIFIER = r'[_a-zA-Z][_a-zA-Z0-9]*'
-
+#t_LPAREN     = r'\('
+#t_RPAREN     = r'\)'
 
 # Mutating tokens
+def t_ID(t):
+    r'[_a-zA-Z][_a-zA-Z0-9]*'
+    t.type = reserved.get(t.value,'ID')    # Check for reserved words
+    return t
+
 def t_NUMBER(t):
     r'\d+(\.\d+)?'
     t.value = float(t.value)  # TODO: Should be Decimal
@@ -36,6 +47,10 @@ def t_STRING(t):
     return t
 
 
+def t_COMMENT(t):
+    r'\#.*'
+    pass
+    # No return value. Token discarded
 
 # Define a rule so we can track line numbers
 def t_newline(t):
