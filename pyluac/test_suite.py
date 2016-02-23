@@ -19,12 +19,12 @@ class PyLUAcLexerTest(unittest.TestCase):
             ['ID', '(', 'STRING', ')'])
 
     def test_indentation(self):
-        data = 'one\n    two\n    three\n        four\n\n    five\n'
+        data = 'one\n  \n    two\n    three\n        four\n          five\n\n    six'
         lexer.input(data)
 
         tokens = list(lexer)
         self.assertEqual([tok.type for tok in tokens],
-            ['ID', 'INDENT', 'ID', 'ID', 'INDENT', 'ID', 'DEDENT', 'ID', 'DEDENT'])
+            ['ID', 'INDENT', 'ID', 'ID', 'INDENT', 'ID', 'INDENT', 'ID', 'DEDENT', 'DEDENT', 'ID', 'DEDENT'])
 
         
     
