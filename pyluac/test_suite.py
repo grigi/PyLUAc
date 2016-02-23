@@ -3,6 +3,7 @@ PyLUAc Test suite
 '''
 import unittest
 
+from ply import lex
 from pyluac.lexer import lexer
 
 class PyLUAcLexerTest(unittest.TestCase):
@@ -26,7 +27,12 @@ class PyLUAcLexerTest(unittest.TestCase):
         self.assertEqual([tok.type for tok in tokens],
             ['ID', 'INDENT', 'ID', 'ID', 'INDENT', 'ID', 'INDENT', 'ID', 'DEDENT', 'DEDENT', 'ID', 'DEDENT'])
 
-        
+    def test_bad_indentation(self):
+        data = 'one\n    two\n  three'
+        lexer.input(data)
+
+        with self.assertRaisesRegex(lex.LexError, 'Invalid indentation'):
+             tokens = list(lexer) 
     
 
 if __name__ == '__main__':

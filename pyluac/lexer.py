@@ -70,8 +70,12 @@ def t_newline(t):
     # Dedentation required
     if new_indent < old_indent:
         # Reset token if more dedents are required
-        if (len(t.lexer.indent) - t.lexer.indent.index(new_indent) - 1) > 1:
-            t.lexer.lexpos -= len(t.value)
+        try:
+            if (len(t.lexer.indent) - t.lexer.indent.index(new_indent) - 1) > 1:
+                t.lexer.lexpos -= len(t.value)
+        except ValueError:
+                raise lex.LexError("Invalid indentation at line %d col %d" % (t.lexer.lineno, find_column(t.lexer.lexdata, t)), t.lexer.lexdata[t.lexer.lexpos:])
+
         t.lexer.indent = t.lexer.indent[:-1]
         t.type = 'DEDENT'
         return t
