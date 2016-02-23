@@ -15,9 +15,17 @@ class PyLUAcLexerTest(unittest.TestCase):
         lexer.input(data)
 
         tokens = list(lexer)
-        assert [tok.type for tok in tokens] == ['ID', '(', 'STRING', ')']
+        self.assertEqual([tok.type for tok in tokens],
+            ['ID', '(', 'STRING', ')'])
 
-    #def test_for_1(self):
+    def test_indentation(self):
+        data = 'one\n    two\n    three\n        four\n\n    five\n'
+        lexer.input(data)
+
+        tokens = list(lexer)
+        self.assertEqual([tok.type for tok in tokens],
+            ['ID', 'INDENT', 'ID', 'ID', 'INDENT', 'ID', 'DEDENT', 'ID', 'DEDENT'])
+
         
     
 
