@@ -1,14 +1,51 @@
 '''
 PyLUAc tokeniser/lexer
 '''
-import ply.lex as lex
+from ply import lex
 
+states = (
+    ('multilined', 'exclusive'),
+    ('multilines', 'exclusive'),
+)
+
+# multiline(s|d) state
+def t_multistringd(t):
+    r'"""'
+    t.lexer.begin('multilined')
+    t.lexer.begin_lexpos = t.lexer.lexpos
+
+def t_multistrings(t):
+    r"'''"
+    t.lexer.begin('multilines')
+    t.lexer.begin_lexpos = t.lexer.lexpos
+
+def t_multilined_multilines_error(t):
+    t.lexer.skip(1)
+
+def t_multilined_STRING(t):
+    r'"""'
+    t.lexer.begin('INITIAL')
+    t.type = 'STRING'
+    t.value = t.lexer.lexdata[t.lexer.begin_lexpos: t.lexer.lexpos-3]
+    return t
+
+def t_multilines_STRING(t):
+    r"'''"
+    t.lexer.begin('INITIAL')
+    t.type = 'STRING'
+    t.value = t.lexer.lexdata[t.lexer.begin_lexpos: t.lexer.lexpos-3]
+    return t
+
+# Normal state - INITIAL
 reserved = {
-    'if'   : 'IF',
-    'then' : 'THEN',
-    'else' : 'ELSE',
-    'while': 'WHILE',
-    'for'  : 'FOR',
+    'if'    : 'IF',
+    'then'  : 'THEN',
+    'else'  : 'ELSE',
+    'while' : 'WHILE',
+    'for'   : 'FOR',
+    'def'   : 'DEF',
+    'class' : 'CLASS',
+    'return': 'RETURN',
 }
 
 # List of token names.   This is always required
@@ -18,19 +55,32 @@ tokens = [
     'NUMBER',
     'INDENT',
     'DEDENT',
-#    'LPAREN',
-#    'RPAREN',
-#    'LSBRACK',
-#    'RSBRACK',
-#    'LCBRACE',
-#    'RCBRACE',
+    'EQUALS',
+    'NEQUALS',
+    'GECOMP',
+    'LECOMP',
+    'GCOMP',
+    'LCOMP',
+    'TRUE',
+    'FALSE',
+    'NONE',
 ] + list(reserved.values())
 
-literals = [ '+','-','*','/','(',')' ]
+literals = ['+', '-', '*', '/', '%', '(', ')', '=', ':']
 
 # Simple tokens
-#t_LPAREN     = r'\('
-#t_RPAREN     = r'\)'
+t_TRUE = r'True'
+t_FALSE = r'False'
+t_NONE = r'None'
+t_EQUALS = r'=='
+t_NEQUALS = r'!='
+t_GECOMP = r'<='
+t_LECOMP = r'>='
+t_GCOMP = r'<'
+t_LCOMP = r'>'
+
+t_ignore_COMMENT = r'\#.*'
+t_ignore_WHITESPACE = r'[ ]'
 
 # Mutating tokens
 def t_ID(t):
@@ -44,17 +94,12 @@ def t_NUMBER(t):
     return t
 
 def t_STRING(t):
-    r'("[^\n"]*")'
+    r'("[^\n"]*"|\'[^\n\']*\')'
     t.value = t.value[1:-1]
     return t
 
-def t_COMMENT(t):
-    r'\#.*'
-    pass
-    # No return value. Token discarded
-
-
 # Define a rule so we can track line numbers and indents and dedents
+# TODO: Make handle tabs
 def t_newline(t):
     r'(\n[ ]*)+'
     t.lexer.lineno += len([i for i in t.value if i == '\n'])
@@ -65,6 +110,7 @@ def t_newline(t):
     if new_indent > old_indent:
         t.lexer.indent.append(new_indent)
         t.type = 'INDENT'
+        t.value = ''
         return t
 
     # Dedentation required
@@ -78,6 +124,7 @@ def t_newline(t):
 
         t.lexer.indent = t.lexer.indent[:-1]
         t.type = 'DEDENT'
+        t.value = ''
         return t
 
 
@@ -105,13 +152,12 @@ lexer = lex.lex()
 lexer.lineno = 1
 lexer.indent = [0]
 
-old_input = lexer.input
-
 # Override input function to do some setup
+# I probably shouldn't do this monkeypatching
+old_input = lexer.input
 def new_input(text):
     lexer.lineno = 1
     lexer.indent = [0]
     return old_input(text + '\n')
-
 lexer.input = new_input
 
