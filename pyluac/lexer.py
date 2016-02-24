@@ -24,9 +24,14 @@ def t_multistrings(t):
 def t_multilined_multilines_newline(t):
     r'\n'
     t.lexer.lineno += 1
-    
+
 def t_multilined_multilines_error(t):
     t.lexer.skip(1)
+
+def t_multilined_multilines_eof(t):
+    t.lexpos = t.lexer.begin_lexpos - 3
+    raise lex.LexError("Multiline string not closed at line %d col %d" % (t.lexer.begin_lineno, find_column(t.lexer.lexdata, t)), t.lexer.lexdata[t.lexer.begin_lexpos:])
+
 
 def t_multilined_STRING(t):
     r'"""'
@@ -145,7 +150,7 @@ def find_column(input, token):
     last_cr = input.rfind('\n',0,token.lexpos)
     if last_cr < 0:
         last_cr = 0
-    column = (token.lexpos - last_cr) + 1
+    column = token.lexpos - last_cr
     return column
 
 
@@ -166,6 +171,8 @@ lexer.indent = [0]
 # I probably shouldn't do this monkeypatching
 old_input = lexer.input
 def new_input(text):
+    # Reset state before each run
+    lexer.begin('INITIAL')
     lexer.lineno = 1
     lexer.indent = [0]
     return old_input(text + '\n')

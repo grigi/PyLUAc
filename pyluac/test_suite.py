@@ -54,6 +54,14 @@ class PyLUAcLexerTest(unittest.TestCase):
         self.assertEqual([tok.type for tok in tokens],
             ['IF', 'ID', 'LCOMP', 'NUMBER', ':', 'INDENT', 'ID', '(', 'ID', '+', 'NUMBER', ')', 'RETURN', 'ID', 'DEDENT'])
 
+    def test_multiline_not_closed(self):
+        data = '\n"""one\n\n\n\ntwo'
+        lexer.input(data)
+
+        with self.assertRaisesRegex(lex.LexError, 'Multiline string not closed at line 2 col 1'):
+             tokens = list(lexer)
+
+
 
 if __name__ == '__main__':
     unittest.main()
