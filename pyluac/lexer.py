@@ -29,7 +29,7 @@ def t_multilined_multilines_error(t):
     t.lexer.skip(1)
 
 def t_multilined_multilines_eof(t):
-    t.lexpos = t.lexer.begin_lexpos - 3
+    t.lexpos = t.lexer.begin_lexpos - 2
     raise lex.LexError("Multiline string not closed at line %d col %d" % (t.lexer.begin_lineno, find_column(t.lexer.lexdata, t)), t.lexer.lexdata[t.lexer.begin_lexpos:])
 
 
@@ -134,6 +134,7 @@ def t_newline(t):
             if (len(t.lexer.indent) - t.lexer.indent.index(new_indent) - 1) > 1:
                 t.lexer.lexpos -= len(t.value)
         except ValueError:
+                t.lexpos = t.lexer.lexpos
                 raise lex.LexError("Invalid indentation at line %d col %d" % (t.lexer.lineno, find_column(t.lexer.lexdata, t)), t.lexer.lexdata[t.lexer.lexpos:])
 
         t.lexer.indent = t.lexer.indent[:-1]
@@ -150,7 +151,7 @@ def find_column(input, token):
     last_cr = input.rfind('\n',0,token.lexpos)
     if last_cr < 0:
         last_cr = 0
-    column = token.lexpos - last_cr
+    column = token.lexpos - last_cr - 1
     return column
 
 

@@ -43,7 +43,7 @@ class PyLUAcLexerTest(unittest.TestCase):
         data = 'one\n    two\n  three'
         lexer.input(data)
 
-        with self.assertRaisesRegex(lex.LexError, 'Invalid indentation'):
+        with self.assertRaisesRegex(lex.LexError, 'Invalid indentation at line 3 col 2'):
              tokens = list(lexer)
 
     def test_whitespace(self):
