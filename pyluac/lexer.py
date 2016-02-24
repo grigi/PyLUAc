@@ -13,12 +13,18 @@ def t_multistringd(t):
     r'"""'
     t.lexer.begin('multilined')
     t.lexer.begin_lexpos = t.lexer.lexpos
+    t.lexer.begin_lineno = t.lexer.lineno
 
 def t_multistrings(t):
     r"'''"
     t.lexer.begin('multilines')
     t.lexer.begin_lexpos = t.lexer.lexpos
+    t.lexer.begin_lineno = t.lexer.lineno
 
+def t_multilined_multilines_newline(t):
+    r'\n'
+    t.lexer.lineno += 1
+    
 def t_multilined_multilines_error(t):
     t.lexer.skip(1)
 
@@ -27,6 +33,7 @@ def t_multilined_STRING(t):
     t.lexer.begin('INITIAL')
     t.type = 'STRING'
     t.value = t.lexer.lexdata[t.lexer.begin_lexpos: t.lexer.lexpos-3]
+    t.lineno = t.lexer.begin_lineno
     return t
 
 def t_multilines_STRING(t):
@@ -34,6 +41,7 @@ def t_multilines_STRING(t):
     t.lexer.begin('INITIAL')
     t.type = 'STRING'
     t.value = t.lexer.lexdata[t.lexer.begin_lexpos: t.lexer.lexpos-3]
+    t.lineno = t.lexer.begin_lineno
     return t
 
 # Normal state - INITIAL
@@ -111,6 +119,7 @@ def t_newline(t):
         t.lexer.indent.append(new_indent)
         t.type = 'INDENT'
         t.value = ''
+        t.lineno = t.lexer.lineno
         return t
 
     # Dedentation required
@@ -125,6 +134,7 @@ def t_newline(t):
         t.lexer.indent = t.lexer.indent[:-1]
         t.type = 'DEDENT'
         t.value = ''
+        t.lineno = t.lexer.lineno
         return t
 
 

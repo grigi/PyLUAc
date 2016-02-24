@@ -36,13 +36,15 @@ class PyLUAcLexerTest(unittest.TestCase):
             ['STRING', 'ID', 'INDENT', 'STRING', 'ID', 'STRING', 'DEDENT', 'ID', 'STRING', 'ID'])
         self.assertEqual([tok.value for tok in tokens],
             ['str1', 'id1', '', 'str2', 'id2', 'str3\nstr4', '', 'id3', '\n\nstr5\n', 'id4'])
+        self.assertEqual([tok.lineno for tok in tokens],
+            [1, 1, 2, 2, 3, 4, 6, 6, 7, 11])
 
     def test_bad_indentation(self):
         data = 'one\n    two\n  three'
         lexer.input(data)
 
         with self.assertRaisesRegex(lex.LexError, 'Invalid indentation'):
-             tokens = list(lexer) 
+             tokens = list(lexer)
 
     def test_whitespace(self):
         data = 'if a>0: \n    print(a + 10) \n    return a'
