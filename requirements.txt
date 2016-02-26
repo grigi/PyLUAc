@@ -1,2 +1,6 @@
 easyply==1.2
 ply==3.8
+
+# Testing
+coverage==4.0.3
+
