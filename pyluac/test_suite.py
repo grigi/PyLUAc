@@ -5,6 +5,8 @@ import unittest
 
 from ply import lex
 from pyluac.lexer import lexer
+from pyluac.parser import parser
+
 
 class PyLUAcLexerTest(unittest.TestCase):
     '''
@@ -72,6 +74,19 @@ class PyLUAcLexerTest(unittest.TestCase):
 
         with self.assertRaisesRegex(lex.LexError, 'Multiline string not closed at line 2 col 1'):
             list(lexer)
+
+
+class PyLUAcParserTest(unittest.TestCase):
+    '''
+    PyLUAc Parser test class
+    '''
+
+    def test_basic(self):
+        'Basic lexing test'
+        data = '1 + (2 + 3) * -4 + f(5)'
+        result = parser.parse(data)
+
+        print(result)
 
 
 if __name__ == '__main__':  # pragma: no cover

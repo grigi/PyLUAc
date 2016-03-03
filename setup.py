@@ -22,7 +22,7 @@ setup(
 
     # Dependencies
     install_requires=[
-        'easyply',
+        'ply',
     ],
 
     # Packages

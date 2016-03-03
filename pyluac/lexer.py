@@ -90,13 +90,10 @@ tokens = [
     'NONE',
 ] + list(reserved.values())
 
-literals = ['+', '-', '*', '/', '%', '(', ')', '=', ':']
+literals = ['+', '-', '*', '/', '%', '(', ')', '=', ':', ',']
 
 
 # Simple tokens
-t_TRUE = r'True'
-t_FALSE = r'False'
-t_NONE = r'None'
 t_EQUALS = r'=='
 t_NEQUALS = r'!='
 t_GECOMP = r'<='
@@ -114,16 +111,29 @@ def t_ID(t):
     t.type = reserved.get(t.value, 'ID')  # Check for reserved words
     return t
 
-
 def t_NUMBER(t):
     r'\d+(\.\d+)?'
     t.value = float(t.value)  # TODO: Should be Decimal
     return t
 
-
 def t_STRING(t):
     r'("[^\n"]*"|\'[^\n\']*\')'
     t.value = t.value[1:-1]
+    return t
+
+def t_TRUE(t):
+    r'True'
+    t.value = True
+    return t
+
+def t_FALSE(t):
+    r'False'
+    t.value = False
+    return t
+
+def t_NONE(t):
+    r'None'
+    t.value = None
     return t
 
 
