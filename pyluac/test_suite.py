@@ -81,7 +81,7 @@ class PyLUAcLexerTest(unittest.TestCase):
         data = 'one\n    two\n  three'
         lexer.input(data)
 
-        with self.assertRaisesRegex(lex.LexError, 'Invalid indentation at line 3 col 2'):
+        with self.assertRaisesRegexp(lex.LexError, 'Invalid indentation at line 3 col 2'):
             list(lexer)
 
     def test_whitespace(self):
@@ -99,7 +99,7 @@ class PyLUAcLexerTest(unittest.TestCase):
         data = '\n"""one\n\n\n\ntwo'
         lexer.input(data)
 
-        with self.assertRaisesRegex(lex.LexError, 'Multiline string not closed at line 2 col 1'):
+        with self.assertRaisesRegexp(lex.LexError, 'Multiline string not closed at line 2 col 1'):
             list(lexer)
 
 

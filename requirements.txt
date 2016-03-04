@@ -1,6 +1,6 @@
 ply==3.8
 
-# Testing
+# Dev/Testing
 coverage==4.0.3
 pylint==1.5.4
-
+tox==2.3.1
