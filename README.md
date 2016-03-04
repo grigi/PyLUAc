@@ -1,6 +1,10 @@
 # PyLUAc
 Python to LUA transpiler
 
+[![Build Status](https://travis-ci.org/grigi/PyLUAc.svg?branch=master)](https://travis-ci.org/grigi/PyLUAc)
+[![Coverage Status](https://coveralls.io/repos/github/grigi/PyLUAc/badge.svg?branch=master)](https://coveralls.io/github/grigi/PyLUAc?branch=master)
+
+
 ## Plans for this project
 LUA is a great VM, it embeds nicely and securely, is easy to integrate. Just... that syntax.
 So this is a project where I experiment using a Python-like syntax that compiles to LUA bytecode.

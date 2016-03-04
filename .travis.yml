@@ -11,3 +11,4 @@ script:
   - coverage run --branch --source=pyluac pyluac/test_suite.py
 after_success:
   - coveralls
+  - coverage report -m
