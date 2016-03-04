@@ -12,7 +12,7 @@ deps:
 	@if [ "X`pip freeze | sort | join -v1 ${TMPFILE} - 2>/dev/null`" != "X" ]; then pip install -r requirements.txt; fi
 
 test:
-	coverage run --branch --source=pyluac pyluac/test_suite.py
+	coverage run --branch --source=pyluac --omit=pyluac/parsetab.py setup.py -q test
 	coverage report -m
 
 lint:

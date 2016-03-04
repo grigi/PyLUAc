@@ -8,7 +8,7 @@ install:
   - pip install coveralls
   - pip install .
 script:
-  - coverage run --branch --source=pyluac setup.py -q test
+  - coverage run --branch --source=pyluac --omit=pyluac/parsetab.py setup.py -q test
 after_success:
   - coveralls
   - coverage report -m
