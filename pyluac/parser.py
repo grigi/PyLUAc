@@ -1,12 +1,12 @@
 '''
 PyLUAc parser
 '''
-
+# pylint: disable=C0103,C0301
 import ply.yacc as yacc
 
 
 # Get the token map from the lexer.  This is required.
-from pyluac.lexer import tokens
+from pyluac.lexer import tokens  # pylint: disable=W0611
 
 precedence = (
     ('left', '+', '-'),
@@ -131,6 +131,7 @@ def p_object(p):
 
 # Error rule for syntax errors
 def p_error(p):  # pragma: no cover
+    'Unexpected error - should fail hard'
     print(p)
     print("Syntax error in input!")
 

@@ -1,7 +1,7 @@
 '''
 PyLUAc tokeniser/lexer
 '''
-# pylint: disable=C0103
+# pylint: disable=C0103,C0301
 import re
 from ply import lex
 

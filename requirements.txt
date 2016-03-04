@@ -2,4 +2,5 @@ ply==3.8
 
 # Testing
 coverage==4.0.3
+pylint==1.5.4
 

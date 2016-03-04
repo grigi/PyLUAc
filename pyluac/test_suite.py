@@ -1,6 +1,7 @@
 '''
 PyLUAc Test suite
 '''
+# pylint: disable=C0301,C0330
 import unittest
 
 from ply import lex
@@ -111,48 +112,48 @@ class PyLUAcParserTest(unittest.TestCase):
         'Expression parsing test'
         data = '1 + (2 + 3) * -4 + f(5) + ()'
         self.assertEqual(
-                parser.parse(data),
-                [('+',
+            parser.parse(data),
+            [('+',
+                ('+',
                     ('+',
-                        ('+',
-                            1.0,
-                            ('*',
-                                ('+', 2.0, 3.0),
-                                ('neg', 4.0)
-                            )
-                        ),
-                        ('func', 'f', [5.0], [])
+                        1,
+                        ('*',
+                            ('+', 2, 3),
+                            ('neg', 4)
+                        )
                     ),
-                    ('tuple', [])
-                )])
+                    ('func', 'f', [5], [])
+                ),
+                ('tuple', [])
+            )])
 
     def test_block(self):
         'Block parsing test'
         data = 'f(a)\nb=1+2\nc\nreturn d'
         self.assertEqual(
-                parser.parse(data),
-                [
-                    ('func', 'f', ['a'], []),
-                    ('assign', 'b', ('+', 1.0, 2.0)),
-                    'c',
-                    ('return', 'd'),
-                ])
+            parser.parse(data),
+            [
+                ('func', 'f', ['a'], []),
+                ('assign', 'b', ('+', 1, 2)),
+                'c',
+                ('return', 'd'),
+            ])
 
     def test_funcparam(self):
         'Function parameters test'
         data = 'f()\nf(1)\nf(1,)\nf(1,2)\nf(a=1)\nf(a=1,)\nf(a=1,b=2)\nf(1,2,a=1,b=2)'
         self.assertEqual(
-                parser.parse(data),
-                [
-                    ('func', 'f', [], []),
-                    ('func', 'f', [1], []),
-                    ('func', 'f', [1], []),
-                    ('func', 'f', [1,2], []),
-                    ('func', 'f', [], [('assign', 'a', 1)]),
-                    ('func', 'f', [], [('assign', 'a', 1)]),
-                    ('func', 'f', [], [('assign', 'a', 1), ('assign', 'b', 2)]),
-                    ('func', 'f', [1,2], [('assign', 'a', 1), ('assign', 'b', 2)]),
-                ])
+            parser.parse(data),
+            [
+                ('func', 'f', [], []),
+                ('func', 'f', [1], []),
+                ('func', 'f', [1], []),
+                ('func', 'f', [1, 2], []),
+                ('func', 'f', [], [('assign', 'a', 1)]),
+                ('func', 'f', [], [('assign', 'a', 1)]),
+                ('func', 'f', [], [('assign', 'a', 1), ('assign', 'b', 2)]),
+                ('func', 'f', [1, 2], [('assign', 'a', 1), ('assign', 'b', 2)]),
+            ])
 
 if __name__ == '__main__':  # pragma: no cover
     unittest.main()
