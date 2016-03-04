@@ -2,7 +2,9 @@
 PyLUAc tokeniser/lexer
 '''
 # pylint: disable=C0103
+import re
 from ply import lex
+
 
 states = (
     ('multilined', 'exclusive'),
@@ -75,6 +77,7 @@ reserved = {
 # List of token names.   This is always required
 tokens = [
     'ID',
+    'IDASSIGN',
     'STRING',
     'NUMBER',
     'INDENT',
@@ -90,7 +93,7 @@ tokens = [
     'NONE',
 ] + list(reserved.values())
 
-literals = ['+', '-', '*', '/', '%', '(', ')', '=', ':', ',']
+literals = ['+', '-', '*', '/', '%', '(', ')', ':', ',']
 
 
 # Simple tokens
@@ -104,16 +107,24 @@ t_LCOMP = r'>'
 t_ignore_COMMENT = r'\#.*'
 t_ignore_WHITESPACE = r'[ ]'
 
-
 # Mutating tokens
 def t_ID(t):
-    r'[_a-zA-Z][_a-zA-Z0-9]*'
-    t.type = reserved.get(t.value, 'ID')  # Check for reserved words
+    r'[_a-zA-Z][_a-zA-Z0-9]*([ ]*=[^=])?'
+    if '=' in t.value:
+        t.type = 'IDASSIGN'
+        m = re.match(r'[_a-zA-Z][_a-zA-Z0-9]*', t.value)
+        t.value = m.group(0)
+        t.lexer.lexpos -= 1
+    else:
+        t.type = reserved.get(t.value, 'ID')  # Check for reserved words
     return t
 
 def t_NUMBER(t):
     r'\d+(\.\d+)?'
-    t.value = float(t.value)  # TODO: Should be Decimal
+    if '.' in t.value:
+        t.value = float(t.value)  # TODO: Should be Decimal
+    else:
+        t.value = int(t.value)
     return t
 
 def t_STRING(t):

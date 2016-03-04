@@ -33,6 +33,19 @@ class PyLUAcLexerTest(unittest.TestCase):
             [tok.type for tok in tokens],
             ['ID', 'INDENT', 'ID', 'ID', 'INDENT', 'ID', 'INDENT', 'ID', 'DEDENT', 'DEDENT', 'ID', 'DEDENT'])
 
+    def test_numbers(self):
+        'Basic number test'
+        data = '1\n1.0\n1.1\n'
+        lexer.input(data)
+
+        tokens = list(lexer)
+        self.assertEqual(
+            [tok.type for tok in tokens],
+            ['NUMBER', 'NUMBER', 'NUMBER'])
+        self.assertEqual(
+            [repr(tok.value) for tok in tokens],
+            ['1', '1.0', '1.1'])
+
     def test_strings(self):
         'Test lexing string/multiline-string handling'
         data = '"str1" id1\n  \'str2\'\n  id2\n  """str3\nstr4"""\nid3\n\'\'\'\n\nstr5\n\'\'\'\nid4'
@@ -81,13 +94,49 @@ class PyLUAcParserTest(unittest.TestCase):
     PyLUAc Parser test class
     '''
 
-    def test_basic(self):
-        'Basic lexing test'
-        data = '1 + (2 + 3) * -4 + f(5)'
-        result = parser.parse(data)
+    def test_expression(self):
+        'Expression parsing test'
+        data = '1 + (2 + 3) * -4 + f(5) + ()'
+        self.assertEqual(
+                parser.parse(data),
+                [('+',
+                    ('+',
+                        ('+',
+                            1.0,
+                            ('*',
+                                ('+', 2.0, 3.0),
+                                ('neg', 4.0)
+                            )
+                        ),
+                        ('func', 'f', [5.0], [])
+                    ),
+                    ('tuple', [])
+                )])
 
-        print(result)
+    def test_block(self):
+        'Block parsing test'
+        data = 'f(a)\nb=1+2\nc'
+        self.assertEqual(
+                parser.parse(data),
+                [
+                    ('func', 'f', ['a'], []),
+                    ('assign', 'b', ('+', 1.0, 2.0)),
+                    'c',
+                ])
 
+    def test_funcparam(self):
+        'Function parameters test'
+        data = 'f()\nf(1)\nf(1,2)\nf(a=1)\nf(a=1,b=2)\nf(1,2,a=1,b=2)'
+        self.assertEqual(
+                parser.parse(data),
+                [
+                    ('func', 'f', [], []),
+                    ('func', 'f', [1], []),
+                    ('func', 'f', [1,2], []),
+                    ('func', 'f', [], [('assign', 'a', 1)]),
+                    ('func', 'f', [], [('assign', 'a', 1), ('assign', 'b', 2)]),
+                    ('func', 'f', [1,2], [('assign', 'a', 1), ('assign', 'b', 2)]),
+                ])
 
 if __name__ == '__main__':  # pragma: no cover
     unittest.main()

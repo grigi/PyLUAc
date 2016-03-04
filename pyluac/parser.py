@@ -44,15 +44,15 @@ def p_return(p):
 
 def p_assignment(p):
     '''
-    assignment : ID '=' expression
+    assignment : IDASSIGN expression
     '''
-    p[0] = ('assign', p[1], p[3])
+    p[0] = ('assign', p[1], p[2])
 
 def p_function(p):
     '''
-    function : ID tuple
+    function : ID '(' expressionlist assignmentlist ')'
     '''
-    p[0] = ('func', p[1], p[2])
+    p[0] = ('func', p[1], p[3], p[4])
 
 def p_tuple(p):
     '''
@@ -62,17 +62,37 @@ def p_tuple(p):
 
 def p_expressionlist(p):
     '''
-    expressionlist : expression ',' expressionlist
-                   | expression ','
+    expressionlist : expressionlist ',' expression
+                   | expressionlist ','
                    | expression
+                   |
     '''
-    if len(p) == 2:
+    if len(p) == 1:
+        p[0] = []
+    elif len(p) == 2:
         p[0] = [p[1]]
     elif len(p) == 3:
-        p[0] = [p[1]]
+        p[0] = p[1]
     else:
+        p[0] = p[1]
+        p[0].append(p[3])
+
+def p_assignmentlist(p):
+    '''
+    assignmentlist : assignmentlist ',' assignment
+                   | assignmentlist ','
+                   | assignment
+                   |
+    '''
+    if len(p) == 1:
+        p[0] = []
+    elif len(p) == 2:
         p[0] = [p[1]]
-        p[0].extend(p[3])
+    elif len(p) == 3:
+        p[0] = p[1]
+    else:
+        p[0] = p[1]
+        p[0].append(p[3])
 
 def p_expression(p):
     '''
