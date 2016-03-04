@@ -62,6 +62,19 @@ class PyLUAcLexerTest(unittest.TestCase):
             [tok.lineno for tok in tokens],
             [1, 1, 2, 2, 3, 4, 6, 6, 7, 11])
 
+    def test_types(self):
+        'Basic type lexing test'
+        data = '1\n1.5\nTrue\nFalse\nNone'
+        lexer.input(data)
+
+        tokens = list(lexer)
+        self.assertEqual(
+            [tok.type for tok in tokens],
+            ['NUMBER', 'NUMBER', 'TRUE', 'FALSE', 'NONE'])
+        self.assertEqual(
+            [tok.value for tok in tokens],
+            [1, 1.5, True, False, None])
+
     def test_bad_indentation(self):
         'Test lexer failing on bad dedentation'
         data = 'one\n    two\n  three'
@@ -115,24 +128,27 @@ class PyLUAcParserTest(unittest.TestCase):
 
     def test_block(self):
         'Block parsing test'
-        data = 'f(a)\nb=1+2\nc'
+        data = 'f(a)\nb=1+2\nc\nreturn d'
         self.assertEqual(
                 parser.parse(data),
                 [
                     ('func', 'f', ['a'], []),
                     ('assign', 'b', ('+', 1.0, 2.0)),
                     'c',
+                    ('return', 'd'),
                 ])
 
     def test_funcparam(self):
         'Function parameters test'
-        data = 'f()\nf(1)\nf(1,2)\nf(a=1)\nf(a=1,b=2)\nf(1,2,a=1,b=2)'
+        data = 'f()\nf(1)\nf(1,)\nf(1,2)\nf(a=1)\nf(a=1,)\nf(a=1,b=2)\nf(1,2,a=1,b=2)'
         self.assertEqual(
                 parser.parse(data),
                 [
                     ('func', 'f', [], []),
                     ('func', 'f', [1], []),
+                    ('func', 'f', [1], []),
                     ('func', 'f', [1,2], []),
+                    ('func', 'f', [], [('assign', 'a', 1)]),
                     ('func', 'f', [], [('assign', 'a', 1)]),
                     ('func', 'f', [], [('assign', 'a', 1), ('assign', 'b', 2)]),
                     ('func', 'f', [1,2], [('assign', 'a', 1), ('assign', 'b', 2)]),

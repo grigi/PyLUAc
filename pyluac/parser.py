@@ -40,7 +40,7 @@ def p_return(p):
     '''
     return : RETURN expression
     '''
-    p[0] = ('return', p[1])
+    p[0] = ('return', p[2])
 
 def p_assignment(p):
     '''
@@ -130,7 +130,7 @@ def p_object(p):
 
 
 # Error rule for syntax errors
-def p_error(p):
+def p_error(p):  # pragma: no cover
     print(p)
     print("Syntax error in input!")
 

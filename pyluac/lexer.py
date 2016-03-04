@@ -107,6 +107,21 @@ t_LCOMP = r'>'
 t_ignore_COMMENT = r'\#.*'
 t_ignore_WHITESPACE = r'[ ]'
 
+def t_TRUE(t):
+    r'True'
+    t.value = True
+    return t
+
+def t_FALSE(t):
+    r'False'
+    t.value = False
+    return t
+
+def t_NONE(t):
+    r'None'
+    t.value = None
+    return t
+
 # Mutating tokens
 def t_ID(t):
     r'[_a-zA-Z][_a-zA-Z0-9]*([ ]*=[^=])?'
@@ -131,22 +146,6 @@ def t_STRING(t):
     r'("[^\n"]*"|\'[^\n\']*\')'
     t.value = t.value[1:-1]
     return t
-
-def t_TRUE(t):
-    r'True'
-    t.value = True
-    return t
-
-def t_FALSE(t):
-    r'False'
-    t.value = False
-    return t
-
-def t_NONE(t):
-    r'None'
-    t.value = None
-    return t
-
 
 # Define a rule so we can track line numbers and indents and dedents
 # TODO: Make handle tabs
