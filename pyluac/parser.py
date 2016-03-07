@@ -9,23 +9,25 @@ import ply.yacc as yacc
 from pyluac.lexer import tokens  # pylint: disable=W0611
 
 precedence = (
+    ('left', 'ID'),
+    ('right', ','),
     ('left', '+', '-'),
     ('left', '*', '/', '%'),
-    ('left', '('),
+    ('left', '(', ')'),
     ('left', 'BRACKET'),
     ('right', 'UMINUS'),
 )
 
 def p_block(p):
     '''
-    block : statement block
+    block : block statement
           | statement
     '''
     if len(p) == 2:
         p[0] = [p[1]]
     else:
-        p[0] = [p[1]]
-        p[0].extend(p[2])
+        p[0] = p[1]
+        p[0].append(p[2])
 
 
 def p_statement(p):
