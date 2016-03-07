@@ -71,6 +71,8 @@ reserved = {
     'def'   : 'DEF',
     'class' : 'CLASS',
     'return': 'RETURN',
+    'range' : 'RANGE',
+    'import': 'IMPORT',
 }
 
 

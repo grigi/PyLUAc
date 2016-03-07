@@ -9,6 +9,7 @@ import ply.yacc as yacc
 from pyluac.lexer import tokens  # pylint: disable=W0611
 
 precedence = (
+    ('left', 'EQUALS', 'NEQUALS', 'LECOMP', 'GECOMP', 'LCOMP', 'GCOMP'),
     ('left', 'ID'),
     ('right', ','),
     ('left', '+', '-'),
@@ -17,6 +18,45 @@ precedence = (
     ('left', 'BRACKET'),
     ('right', 'UMINUS'),
 )
+
+#def p_controllist(p):
+    #'''
+    #controllist : controllist control
+                #| control
+    #'''
+    #if len(p) == 2:
+        #p[0] = [p[1]]
+    #else:
+        #p[0] = p[1]
+        #p[0].append(p[2])
+
+#def p_control(p):
+    #'''
+    #control : if
+            #| while
+            #| for
+            #| block
+    #'''
+    #p[0] = p[1]
+
+#def p_if(p):
+    #'''
+    #if : IF
+    #'''
+    #pass
+
+#def p_while(p):
+    #'''
+    #while : WHILE
+    #'''
+    #pass
+
+#def p_for(p):
+    #'''
+    #for : FOR
+    #'''
+    #pass
+
 
 def p_block(p):
     '''
@@ -34,9 +74,11 @@ def p_statement(p):
     '''
     statement : assignment
               | expression
+              | comparison
               | return
     '''
     p[0] = p[1]
+
 
 def p_return(p):
     '''
@@ -44,11 +86,13 @@ def p_return(p):
     '''
     p[0] = ('return', p[2])
 
+
 def p_assignment(p):
     '''
     assignment : IDASSIGN expression
     '''
     p[0] = ('assign', p[1], p[2])
+
 
 def p_function(p):
     '''
@@ -56,11 +100,13 @@ def p_function(p):
     '''
     p[0] = ('func', p[1], p[3], p[4])
 
+
 def p_tuple(p):
     '''
     tuple : '(' expressionlist ')'
     '''
     p[0] = ('tuple', p[2])
+
 
 def p_expressionlist(p):
     '''
@@ -79,6 +125,7 @@ def p_expressionlist(p):
         p[0] = p[1]
         p[0].append(p[3])
 
+
 def p_assignmentlist(p):
     '''
     assignmentlist : assignmentlist ',' assignment
@@ -95,6 +142,19 @@ def p_assignmentlist(p):
     else:
         p[0] = p[1]
         p[0].append(p[3])
+
+
+def p_comparison(p):
+    '''
+    comparison : expression EQUALS expression
+               | expression NEQUALS expression
+               | expression LECOMP expression
+               | expression GECOMP expression
+               | expression LCOMP expression
+               | expression GCOMP expression
+    '''
+    p[0] = (p[2], p[1], p[3])
+
 
 def p_expression(p):
     '''
