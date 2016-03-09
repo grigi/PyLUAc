@@ -73,7 +73,6 @@ def p_block(p):
 def p_statement(p):
     '''
     statement : assignment
-              | expression
               | comparison
               | return
     '''
@@ -146,14 +145,26 @@ def p_assignmentlist(p):
 
 def p_comparison(p):
     '''
-    comparison : expression EQUALS expression
-               | expression NEQUALS expression
-               | expression LECOMP expression
-               | expression GECOMP expression
-               | expression LCOMP expression
-               | expression GCOMP expression
+    comparison : expression EQUALS comparison
+               | expression NEQUALS comparison
+               | expression LECOMP comparison
+               | expression GECOMP comparison
+               | expression LCOMP comparison
+               | expression GCOMP comparison
+               | expression
     '''
-    p[0] = (p[2], p[1], p[3])
+    if len(p) == 2:
+        p[0] = p[1]
+    else:
+        p[0] = ('comparison', [p[2]], [p[1], p[3]])
+        try:
+            if p[3][0] == 'comparison':
+                p[0] = ('comparison', [p[2]], [p[1]])
+                p[0][1].extend(p[3][1])
+                p[0][2].extend(p[3][2])
+        except TypeError:
+            pass
+    #p[0] = p[1:]
 
 
 def p_expression(p):

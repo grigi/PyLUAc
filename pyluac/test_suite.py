@@ -156,30 +156,40 @@ class PyLUAcParserTest(unittest.TestCase):
             ])
 
     def test_comparison(self):
-        'Expression parsing test'
+        'Comparison parsing test'
         data = '1 < 2 + 3'
         self.assertEqual(
             parser.parse(data),
-            [('<',
-                1,
-                ('+',
-                    2,
-                    3
-                )
+            [('comparison',
+                ['<'],
+                [
+                    1,
+                    ('+',
+                        2,
+                        3
+                    )
+                ],
             )])
 
-    @unittest.expectedFailure
     def test_comparison_chain(self):
-        'Expression parsing test'
-        data = '1 < 2 + 3 < 4 * 5'
+        'Comparison chain parsing test'
+        data = '1 < 2 + 3 <= 4 * 5 > 2'
         self.assertEqual(
             parser.parse(data),
-            [('<',
-                1,
-                ('+',
-                    2,
-                    3
-                )
+            [('comparison',
+                ['<', '<=', '>'],
+                [
+                    1,
+                    ('+',
+                        2,
+                        3
+                    ),
+                    ('*',
+                        4,
+                        5
+                    ),
+                    2
+                ],
             )])
 
 if __name__ == '__main__':  # pragma: no cover
