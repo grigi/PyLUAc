@@ -81,14 +81,14 @@ def p_statement(p):
 
 def p_return(p):
     '''
-    return : RETURN expression
+    return : RETURN comparison
     '''
     p[0] = ('return', p[2])
 
 
 def p_assignment(p):
     '''
-    assignment : IDASSIGN expression
+    assignment : IDASSIGN comparison
     '''
     p[0] = ('assign', p[1], p[2])
 
@@ -109,9 +109,9 @@ def p_tuple(p):
 
 def p_expressionlist(p):
     '''
-    expressionlist : expressionlist ',' expression
+    expressionlist : expressionlist ',' comparison
                    | expressionlist ','
-                   | expression
+                   | comparison
                    |
     '''
     if len(p) == 1:
@@ -151,7 +151,7 @@ def p_comparison(p):
                | expression GECOMP comparison
                | expression LCOMP comparison
                | expression GCOMP comparison
-               | expression
+               | expression %prec ID
     '''
     if len(p) == 2:
         p[0] = p[1]
