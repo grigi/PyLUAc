@@ -19,62 +19,55 @@ precedence = (
     ('right', 'UMINUS'),
 )
 
-#def p_controllist(p):
-    #'''
-    #controllist : controllist control
-                #| control
-    #'''
-    #if len(p) == 2:
-        #p[0] = [p[1]]
-    #else:
-        #p[0] = p[1]
-        #p[0].append(p[2])
-
-#def p_control(p):
-    #'''
-    #control : if
-            #| while
-            #| for
-            #| block
-    #'''
-    #p[0] = p[1]
-
-#def p_if(p):
-    #'''
-    #if : IF
-    #'''
-    #pass
-
-#def p_while(p):
-    #'''
-    #while : WHILE
-    #'''
-    #pass
-
-#def p_for(p):
-    #'''
-    #for : FOR
-    #'''
-    #pass
-
 
 def p_block(p):
     '''
-    block : block statement
+    block : statement block
           | statement
     '''
     if len(p) == 2:
         p[0] = [p[1]]
     else:
-        p[0] = p[1]
-        p[0].append(p[2])
+        p[0] = [p[1]]
+        p[0].extend(p[2])
 
 
 def p_statement(p):
     '''
-    statement : assignment
-              | comparison
-              | return
+    statement : if
+              | while
+              | vested
+    '''
+    p[0] = p[1]
+
+
+def p_if(p):
+    '''
+    if : IF comparison ':' INDENT block DEDENT ifcont
+    '''
+    pass
+
+
+def p_ifcont(p):
+    '''
+    ifcont : ELIF comparison ':' INDENT block DEDENT ifcont
+           | ELSE INDENT block DEDENT
+    '''
+    pass
+
+
+def p_while(p):
+    '''
+    while : WHILE comparison ':' INDENT block DEDENT
+    '''
+    p[0] = ('while', p[2], p[5])
+
+
+def p_vested(p):
+    '''
+    vested : assignment
+           | comparison
+           | return
     '''
     p[0] = p[1]
 

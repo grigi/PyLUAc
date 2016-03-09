@@ -64,8 +64,8 @@ def t_multilines_STRING(t):
 # Normal state - INITIAL
 reserved = {
     'if'    : 'IF',
-    'then'  : 'THEN',
     'else'  : 'ELSE',
+    'elif'  : 'ELIF',
     'while' : 'WHILE',
     'for'   : 'FOR',
     'def'   : 'DEF',

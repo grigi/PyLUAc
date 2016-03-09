@@ -192,6 +192,19 @@ class PyLUAcParserTest(unittest.TestCase):
                 ],
             )])
 
+    def test_while_block(self):
+        'While block parsing test'
+        data = 'while a > 1:\n    f()\n    1+2'
+        self.assertEqual(
+            parser.parse(data),
+            [('while',
+                ('comparison', ['>'], ['a', 1]),
+                [
+                    ('func', 'f', [], []),
+                    ('+', 1, 2)
+                ],
+            )])
+
 if __name__ == '__main__':  # pragma: no cover
     unittest.main()
 
