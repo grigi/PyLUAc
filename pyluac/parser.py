@@ -168,7 +168,7 @@ def p_expression(p):
                | expression '/' expression
                | expression '%' expression
                | '-' expression %prec UMINUS
-               | '(' expression ')' %prec BRACKET
+               | '(' comparison ')' %prec BRACKET
                | object
     '''
     if len(p) == 2:
