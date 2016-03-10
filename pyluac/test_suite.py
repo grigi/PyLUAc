@@ -218,6 +218,59 @@ class PyLUAcParserTest(unittest.TestCase):
                 ],
             )])
 
+    def test_if_block(self):
+        'If block parsing test'
+        data = 'if a > 1:\n    f()\n    1+2'
+        self.assertEqual(
+            parser.parse(data),
+            [('if',
+                ('comparison', ['>'], ['a', 1]),
+                [
+                    ('func', 'f', [], []),
+                    ('+', 1, 2)
+                ],
+                []
+            )])
+
+    def test_if_else_block(self):
+        'If-else block parsing test'
+        data = 'if a > 1:\n    f()\n    1+2\nelse:\n    3 + 4'
+        self.assertEqual(
+            parser.parse(data),
+            [('if',
+                ('comparison', ['>'], ['a', 1]),
+                [
+                    ('func', 'f', [], []),
+                    ('+', 1, 2)
+                ],
+                [
+                    ('+', 3, 4)
+                ]
+            )])
+
+    def test_if_elif_block(self):
+        'If-elif block chaining test'
+        data = 'if a > 1:\n    f()\n    1+2\nelif b < 2:\n    3 + 4'
+        self.assertEqual(
+            parser.parse(data),
+            [('if',
+                ('comparison', ['>'], ['a', 1]),
+                [
+                    ('func', 'f', [], []),
+                    ('+', 1, 2)
+                ],
+                [
+                    ('if',
+                        ('comparison', ['<'], ['b', 2]),
+                        [
+                            ('+', 3, 4)
+                        ],
+                        []
+                    )
+                ]
+            )])
+
+
 if __name__ == '__main__':  # pragma: no cover
     unittest.main()
 

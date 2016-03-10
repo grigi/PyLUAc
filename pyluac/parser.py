@@ -45,15 +45,22 @@ def p_if(p):
     '''
     if : IF comparison ':' INDENT block DEDENT ifcont
     '''
-    pass
+    p[0] = ('if', p[2], p[5], p[7])
 
 
 def p_ifcont(p):
     '''
     ifcont : ELIF comparison ':' INDENT block DEDENT ifcont
-           | ELSE INDENT block DEDENT
+           | ELSE ':' INDENT block DEDENT
+           |
     '''
-    pass
+    if len(p) == 1:
+        p[0] = []
+    elif p[1] == 'elif':
+        p[0] = [('if', p[2], p[5], p[7])]
+    else:
+        p[0] = p[4]
+
 
 
 def p_while(p):
